@@ -1,6 +1,9 @@
 import User from "../model/User.js";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
+import generateToken from "../utils/generateToken.js";
+import getTokenFromHeader from "../utils/getTokenFromHeader.js"
+import { verifyToken } from "../utils/verifyToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -19,11 +22,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
   });
+  const token = generateToken(user._id);
 
   res.status(201).json({
     status: "Success",
     message: "User created has successfully",
     data: user,
+    token,
   });
 });
 
@@ -35,12 +40,28 @@ export const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (userFound && (await bcrypt.compare(password, userFound?.password))) {
+    const token = generateToken(userFound?._id)
     res.json({
       status: "success",
       message: "Logged in",
       data: userFound,
+      token
     });
   } else {
     throw new Error("Invalid Login Credentials");
   }
 });
+
+
+export const getUserProfile =  asyncHandler(async(req,res)=>{
+
+  const token = getTokenFromHeader(req);
+ 
+  const verify = verifyToken(token);
+
+
+  res.json({
+    message : "Welcome to Profile Page"
+  })
+});
+
