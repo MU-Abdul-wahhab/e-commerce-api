@@ -4,34 +4,24 @@ import Product from "../model/Product.js";
 import asyncHandler from "express-async-handler";
 
 export const createProduct = asyncHandler(async (req, res) => {
-  const {
-    name,
-    description,
-    category,
-    sizes,
-    colors,
-    price,
-    totalQty,
-    brand,
-  } = req.body;
+  const { name, description, category, sizes, colors, price, totalQty, brand } =
+    req.body;
 
   const productExist = await Product.findOne({ name });
 
   if (productExist) throw new Error("Product Already Exists");
 
   const brandFound = await Brand.findOne({
-    name : brand
+    name: brand,
   });
 
-
-  if(!brandFound) throw new Error("Invalid Brand")
+  if (!brandFound) throw new Error("Invalid Brand");
 
   const categoryFound = await Category.findOne({
-    name : category
+    name: category,
   });
 
-
-  if(!categoryFound) throw new Error("Invalid Category")
+  if (!categoryFound) throw new Error("Invalid Category");
 
   const product = await Product.create({
     name,
@@ -112,7 +102,8 @@ export const getAllproducts = asyncHandler(async (req, res) => {
 
   const products = await Product.find(productQueryObj)
     .skip(startIndex)
-    .limit(limit);
+    .limit(limit)
+    .populate("reviews");
 
   res.json({
     status: "Success",
@@ -126,7 +117,7 @@ export const getAllproducts = asyncHandler(async (req, res) => {
 
 export const getSingleProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const product = await Product.findById(id);
+  const product = await Product.findById(id).populate("reviews");
 
   if (!product) throw new Error("Product Not Found");
 

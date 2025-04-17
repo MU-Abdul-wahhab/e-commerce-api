@@ -2,7 +2,7 @@ import User from "../model/User.js";
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
-import getTokenFromHeader from "../utils/getTokenFromHeader.js"
+import getTokenFromHeader from "../utils/getTokenFromHeader.js";
 import { verifyToken } from "../utils/verifyToken.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
@@ -40,28 +40,54 @@ export const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (userFound && (await bcrypt.compare(password, userFound?.password))) {
-    const token = generateToken(userFound?._id)
+    const token = generateToken(userFound?._id);
     res.json({
       status: "success",
       message: "Logged in",
       data: userFound,
-      token
+      token,
     });
   } else {
     throw new Error("Invalid Login Credentials");
   }
 });
 
+export const getUserProfile = asyncHandler(async (req, res) => {
 
-export const getUserProfile =  asyncHandler(async(req,res)=>{
-
-  const token = getTokenFromHeader(req);
- 
-  const verify = verifyToken(token);
+  const user = await User.findById(req.userAuthId).populate("orders");
 
 
   res.json({
-    message : "Welcome to Profile Page"
-  })
+    message: "Welcome to Profile Page",
+    user
+  });
 });
 
+export const updateShippingAddress = asyncHandler(async (req, res) => {
+  const { firstName, lastName, address, city, postalCode, province, phone } =
+    req.body;
+  const user = await User.findByIdAndUpdate(
+    req.userAuthId,
+    {
+      shippingAddress: {
+        firstName,
+        lastName,
+        address,
+        city,
+        postalCode,
+        province,
+        phone,
+      },
+      hasShippingAddress: true,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.json({
+    status : "success",
+    message : "Shipping Address Updated Succeesfully",
+    user,
+  })
+});
