@@ -3,7 +3,12 @@ import Category from "../model/Category.js";
 import Product from "../model/Product.js";
 import asyncHandler from "express-async-handler";
 
+
 export const createProduct = asyncHandler(async (req, res) => {
+
+  const imgPath = req.files.map(file=>file.path);
+  console.log(imgPath);
+
   const { name, description, category, sizes, colors, price, totalQty, brand } =
     req.body;
 
@@ -33,6 +38,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     price,
     totalQty,
     brand,
+    images : imgPath
   });
 
   categoryFound.products.push(product._id);
@@ -46,6 +52,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     message: "Product Created Successfully",
     product,
   });
+ 
 });
 
 export const getAllproducts = asyncHandler(async (req, res) => {

@@ -12,11 +12,13 @@ const categorySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    image: {
-      type: String,
-      required: true,
-      default : "https://picsum.photos/200/300"
-    },
+    image: [
+      {
+        type: String,
+        required: true,
+        default: "https://picsum.photos/200/300",
+      },
+    ],
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,

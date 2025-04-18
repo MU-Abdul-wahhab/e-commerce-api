@@ -3,14 +3,17 @@ import asyncHandler from "express-async-handler";
 
 export const createCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
-
+  const imgPath = req.files.map((file) => file.path);
   const categoryFound = await Category.findOne({ name });
+
+  console.log(imgPath);
 
   if (categoryFound) throw new Error("Category ALready Exists");
 
   const category = await Category.create({
     name,
     user: req.userAuthId,
+    image: imgPath
   });
 
   res.json({

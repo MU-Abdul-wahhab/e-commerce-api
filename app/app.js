@@ -12,8 +12,8 @@ import BrandRouter from "../routes/BrandRouter.js";
 import ColourRouter from "../routes/ColourRouter.js";
 import ReviewRouter from "../routes/ReviewRouter.js";
 import orderRouter from "../routes/OrderRouter.js";
-import Stripe from "stripe";
 import Order from "../model/Order.js";
+import CoupenRouter from "../routes/CoupenRouter.js";
 
 dotenv.config();
 dbConnect();
@@ -80,6 +80,7 @@ app.use("/api/v1/brands/", BrandRouter);
 app.use("/api/v1/colours/", ColourRouter);
 app.use("/api/v1/reviews/", ReviewRouter);
 app.use("/api/v1/orders/", orderRouter);
+app.use("/api/v1/coupens" , CoupenRouter);
 
 app.use(notFound);
 app.use(globalErrorHandler);

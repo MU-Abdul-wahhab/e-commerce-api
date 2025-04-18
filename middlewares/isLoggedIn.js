@@ -12,7 +12,4 @@ export const isLoggedIn = (req,res,next)=>{
         req.userAuthId = decoded?.id
         next();
     }
-
- 
-
 }
